@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -40,8 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.studyflow.app.ui.components.LabeledTextField
 import com.studyflow.app.ui.theme.BackgroundOffWhite
+import com.studyflow.app.ui.theme.DangerRed
 import com.studyflow.app.ui.theme.PurplePrimary
 import com.studyflow.app.ui.theme.TextSecondary
+
+// Cuenta de prueba: no hay backend, solo se compara contra estos valores.
+const val DEMO_EMAIL = "ejemplo@gmail.com"
+const val DEMO_PASSWORD = "1234567"
 
 @Composable
 fun LoginScreen(
@@ -51,11 +59,22 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var showError by remember { mutableStateOf(false) }
+
+    val tryLogin = {
+        if (email.trim().equals(DEMO_EMAIL, ignoreCase = true) && password == DEMO_PASSWORD) {
+            showError = false
+            onLoginClick()
+        } else {
+            showError = true
+        }
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(BackgroundOffWhite)
+            .imePadding()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -100,9 +119,14 @@ fun LoginScreen(
         LabeledTextField(
             label = "Correo electrónico",
             value = email,
-            onValueChange = { email = it },
+            onValueChange = {
+                email = it
+                showError = false
+            },
             placeholder = "nombre@uniandes.edu.co",
-            keyboardType = KeyboardType.Email
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next,
+            isError = showError
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -110,9 +134,15 @@ fun LoginScreen(
         LabeledTextField(
             label = "Contraseña",
             value = password,
-            onValueChange = { password = it },
-            placeholder = "••••••••",
+            onValueChange = {
+                password = it
+                showError = false
+            },
+            placeholder = "Tu contraseña",
             keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done,
+            keyboardActions = KeyboardActions(onDone = { tryLogin() }),
+            isError = showError,
             visualTransformation = if (isPasswordVisible) {
                 VisualTransformation.None
             } else {
@@ -137,10 +167,20 @@ fun LoginScreen(
             }
         )
 
+        if (showError) {
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Correo o contraseña incorrectos",
+                color = DangerRed,
+                fontSize = 13.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         Spacer(modifier = Modifier.height(28.dp))
 
         Button(
-            onClick = onLoginClick,
+            onClick = tryLogin,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
