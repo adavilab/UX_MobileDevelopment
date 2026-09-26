@@ -19,3 +19,4 @@ local.properties
 
 # Android Profiling
 *.hprof
+.idea/ # la carpeta .idea no se sube nunca
