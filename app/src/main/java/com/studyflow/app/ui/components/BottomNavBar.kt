@@ -1,8 +1,8 @@
 package com.studyflow.app.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -20,7 +20,7 @@ import com.studyflow.app.ui.theme.TextSecondary
 
 enum class BottomNavItem(val label: String, val icon: ImageVector) {
     Today("Hoy", Icons.Filled.CalendarToday),
-    StartSession("Empezar sesión", Icons.Filled.MenuBook),
+    StartSession("Empezar sesión", Icons.AutoMirrored.Filled.MenuBook),
     Settings("Ajustes", Icons.Filled.Settings)
 }
 
